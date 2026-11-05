@@ -29,6 +29,12 @@ jobs:
           xcodebuild -version
       - name: Unit tests
         run: ./scripts/test.sh unit
+      - name: Install conversion tools
+        # RondoCore's fixtures create sample media with the real ffmpeg and cwebp
+        run: brew install ffmpeg webp
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
       - name: Package tests
         run: ./scripts/test.sh packages
       - name: Format check (advisory)

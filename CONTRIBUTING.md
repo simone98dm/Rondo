@@ -23,7 +23,7 @@ Rondo is a small, native, private menu bar utility. A few rules keep it that way
 You need:
 
 - A Mac on **macOS 26.5** or later and the latest **Xcode** (from the App Store or developer.apple.com).
-- Optional, for the features that use them: `brew install mole ffmpeg webp`.
+- Optional, for the features that use them: `brew install mole ffmpeg webp`. The RondoCore package tests need `ffmpeg` and `webp`.
 
 ```bash
 git clone https://github.com/simone98dm/Rondo.git
