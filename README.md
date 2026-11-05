@@ -28,6 +28,7 @@
 - [Build and run](#build-and-run)
 - [Testing](#testing)
 - [Project layout](#project-layout)
+- [Contributing](#contributing)
 - [Privacy, uninstall and credits](#privacy-uninstall-and-credits)
 
 ---
@@ -249,8 +250,8 @@ Grant them in System Settings → Privacy & Security. Rondo notices the change b
 
 - macOS 26 (Tahoe) or later
 - Xcode 26 or later to build
-- Optional for the File Converter: `brew install ffmpeg webp`
 - Optional: [Mole](https://github.com/tw93/mole) (`brew install mole`) for Disk analysis and Disk Clean
+- Optional for the File Converter: `brew install ffmpeg webp`
 
 ---
 
@@ -263,7 +264,7 @@ cd rondo
 open dist/Rondo.app
 ```
 
-Or open `Rondo.xcodeproj` in Xcode and press **⌘R**. The File Converter engine is a local Swift package (`Packages/RondoCore`) that Xcode resolves automatically.
+Or open `Rondo.xcodeproj` in Xcode and press **⌘R**. The File Converter engine is a local Swift package (`Packages/RondoCore`) that Xcode resolves automatically. No Apple developer account is needed: builds are signed ad hoc. To sign with your own team, see [Code signing](CONTRIBUTING.md#code-signing).
 
 First launch:
 1. Look for the ring icon in the menu bar.
@@ -289,7 +290,7 @@ First launch:
 ./scripts/release.sh minor --notes-file notes.md   # or patch / major; omit --notes-file to auto-generate notes
 ```
 
-The script bumps the version in the project, builds **once** into `dist/Rondo.app`, checks that the built app reports the new version, zips that same app, commits, creates an annotated tag `vX.Y.Z`, pushes, and publishes the GitHub release. A GitHub Action (`.github/workflows/tag-version.yml`) also fails any pushed tag whose name doesn't match the app version, and `./scripts/version.sh` prints or checks the version by hand.
+The script bumps the version in the project, builds **once** into `dist/Rondo.app`, checks that the built app reports the new version, zips that same app, commits, creates an annotated tag `vX.Y.Z`, pushes, and publishes the GitHub release. Add the release's changes to [CHANGELOG.md](CHANGELOG.md) first. A GitHub Action (`.github/workflows/tag-version.yml`) also fails any pushed tag whose name doesn't match the app version, and `./scripts/version.sh` prints or checks the version by hand.
 
 - **Unit tests** (`RondoTests`, Swift Testing) cover zone geometry, multi-monitor screen choice, shortcut normalization, the shared event tap, the switcher and ring state machines, menu bar formatting, sampler math, process grouping, Mole output parsing and command flow, treemap layout and chart slices, Stay Awake assertions, Keyboard Cleaning, tiling suggestions and the converter switch.
 - **UI tests** (`RondoUITests`) drive the popover, the Settings window, Disk Clean and System Monitor, and check that every control has an accessibility label.
@@ -329,8 +330,15 @@ Rondo/
 Packages/RondoCore/  conversion engine (formats, tools, wheel logic) + tests
 RondoTests/, RondoUITests/
 design/icon/         icon source (IconKit.swift, SVG masters, direction sheet)
-scripts/             build, test, perf, e2e, screenshots, icons
+scripts/             build, test, format, perf, e2e, screenshots, icons
+Config/              code signing settings (Signing.xcconfig, your own Local.xcconfig)
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, conventions and tests, and follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report bugs and ideas through the [issue forms](https://github.com/simone98dm/Rondo/issues/new/choose), and security problems privately as described in [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

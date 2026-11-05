@@ -1,0 +1,6 @@
+// Copy to Config/Local.xcconfig (gitignored) to sign with your Apple developer team.
+// A stable signature keeps macOS privacy permissions (Accessibility, Screen Recording)
+// granted across rebuilds; ad-hoc builds may need them granted again after each build.
+// Find your team ID at https://developer.apple.com/account → Membership details.
+DEVELOPMENT_TEAM = ABCDE12345
+CODE_SIGN_IDENTITY = Apple Development

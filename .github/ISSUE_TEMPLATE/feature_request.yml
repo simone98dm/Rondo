@@ -1,0 +1,82 @@
+name: Feature request
+description: Suggest a new feature or an improvement to an existing one.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Rondo aims to stay small, local and private, so describing the problem you want solved helps more than a finished design.
+        Please check the [existing issues](https://github.com/simone98dm/Rondo/issues?q=is%3Aissue) first.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature
+      description: Which part of Rondo is this about?
+      options:
+        - Menu bar stats
+        - System tab / System Monitor
+        - Disk tab / Disk Clean (Mole)
+        - Window manager (zones, shortcuts, tiling suggestions)
+        - Window Ring
+        - Window switcher
+        - File Converter
+        - Stay Awake / Keyboard Cleaning
+        - Settings
+        - Something new
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: What are you trying to do, and what gets in the way today?
+      placeholder: When I tile three windows I have to resize the middle one by hand every time…
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How would you like it to work? Mention shortcuts, settings or where it would live in the UI.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and workarounds
+      description: What do you use or do today? Other apps that already do this well are useful references.
+    validations:
+      required: false
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Mockups or screenshots
+      description: Sketches, screenshots or recordings that show the idea. Drag files here.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: importance
+    attributes:
+      label: How important is it to you?
+      options:
+        - Nice to have
+        - Would use it often
+        - Blocks how I use Rondo
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and this hasn't been requested yet.
+          required: true
+        - label: I'd be happy to help test it.

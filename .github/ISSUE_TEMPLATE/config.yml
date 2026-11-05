@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Problem with Mole itself
+    url: https://github.com/tw93/mole/issues
+    about: Disk analysis and cleaning are done by the Mole CLI. If `mo` misbehaves in Terminal too, report it to Mole.

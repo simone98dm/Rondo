@@ -1,0 +1,41 @@
+# Builds Rondo and runs the unit and package tests on every pull request and push to main.
+# UI tests need Accessibility and Screen Recording, which hosted runners can't grant, so they run locally
+# (./scripts/test.sh ui). Builds are signed ad hoc (Config/Signing.xcconfig), so no secrets are needed.
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  test:
+    # Xcode 27 image (GitHub preview label), matching the Xcode the project is developed with.
+    # macos-26 only ships Xcode 26.x, which lacks the macOS 27 SDK.
+    runs-on: xcode-27
+    timeout-minutes: 30
+    env:
+      XCODE_VERSION: "27.2"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # format check compares against main
+      - name: Select Xcode ${{ env.XCODE_VERSION }}
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
+          xcodebuild -version
+      - name: Unit tests
+        run: ./scripts/test.sh unit
+      - name: Package tests
+        run: ./scripts/test.sh packages
+      - name: Format check (advisory)
+        run: ./scripts/format.sh --check || true
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test-results
