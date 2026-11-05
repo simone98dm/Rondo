@@ -51,12 +51,13 @@ private struct QuickToggle: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 4)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 6)
             .foregroundStyle(isOn ? Color.accentColor : .primary)
             .background(RoundedRectangle(cornerRadius: Theme.cornerRadius)
                 .fill(isOn ? Color.accentColor.opacity(0.15) : Color.primary.opacity(0.05)))
         }
-        .buttonStyle(.rondo)
+        .buttonStyle(.rondoTile)
         .accessibilityLabel(title)
         .accessibilityValue(isOn ? "On" : "Off")
         .accessibilityAddTraits(.isToggle)
