@@ -30,7 +30,8 @@ final class PopoverUITests: XCTestCase {
         window.typeKey("3", modifierFlags: .command)
         XCTAssertTrue(window.staticTexts["Accessibility Required"].waitForExistence(timeout: 3))
         window.typeKey("2", modifierFlags: .command)
-        XCTAssertTrue(window.staticTexts["Large Folders"].waitForExistence(timeout: 3))
+        // Disk tab: an analysis (Rescan) or, without Mole, the setup prompt
+        XCTAssertTrue(window.buttons["Rescan"].waitForExistence(timeout: 30) || window.buttons["Set Up Mole…"].exists)
     }
 
     func testGearOpensSettingsWindow() {
@@ -60,10 +61,13 @@ final class PopoverUITests: XCTestCase {
         let window = app.windows["Rondo"]
         XCTAssertTrue(window.waitForExistence(timeout: 10))
         window.typeKey("2", modifierFlags: .command)
-        window.buttons["Scan Home Folder"].click()
+        // Mole may be missing on the test machine: then the tab offers setup instead of an analysis
+        let ready = window.buttons["Rescan"].waitForExistence(timeout: 30) || window.buttons["Set Up Mole…"].exists
+        XCTAssertTrue(ready)
         window.typeKey("1", modifierFlags: .command)
         window.typeKey("2", modifierFlags: .command)
-        // the scan started on the Disk tab is still there (kept alive), not reset to the empty state
-        XCTAssertFalse(window.buttons["Scan Home Folder"].exists)
+        // the Disk tab is kept alive: no fresh analysis or empty state when coming back
+        XCTAssertFalse(window.buttons["Analyze Disk"].exists)
+        XCTAssertTrue(window.buttons["Rescan"].exists || window.buttons["Set Up Mole…"].exists)
     }
 }

@@ -38,6 +38,7 @@ for tab in System Disk Windows Switcher Convert; do
 done
 capture "system-monitor" --open-system-monitor
 capture "disk-clean" --open-disk-clean
+capture "disk-clean-clean" --open-disk-clean=clean
 capture "about" --open-about
 for pane in general menuBar windowManager windowRing fileConverter diskClean power; do
   capture "settings-$pane" --open-settings=$pane

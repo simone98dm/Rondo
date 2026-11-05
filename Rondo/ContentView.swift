@@ -98,6 +98,8 @@ struct ContentView: View {
                         Text(tab.title).font(.caption2.weight(isSelected ? .semibold : .regular))
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 2)
                     .foregroundStyle(isSelected ? Color.accentColor : .secondary)
                     .background {
                         if isSelected {
@@ -107,7 +109,7 @@ struct ContentView: View {
                         }
                     }
                 }
-                .buttonStyle(RondoButtonStyle(kind: .tab))
+                .buttonStyle(.rondoTile)
                 .keyboardShortcut(tab.shortcut, modifiers: .command)
                 .accessibilityLabel(tab.title)
                 .accessibilityAddTraits(isSelected ? .isSelected : [])

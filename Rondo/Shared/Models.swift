@@ -32,14 +32,6 @@ nonisolated struct ProcessInfo: Identifiable, Sendable, Hashable {
     var ramBytes: UInt64
 }
 
-nonisolated struct FolderInfo: Identifiable, Sendable {
-    let id = UUID()
-    var url: URL
-    var bytes: Int64
-
-    var name: String { url.lastPathComponent }
-}
-
 // MARK: - Shortcuts
 
 nonisolated struct ShortcutBinding: Codable, Hashable, Sendable {

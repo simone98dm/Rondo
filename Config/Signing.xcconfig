@@ -1,0 +1,9 @@
+// Code signing for every target.
+//
+// By default Rondo is signed ad hoc ("Sign to Run Locally"), so anyone can build it without an
+// Apple developer account. To sign with your own team, copy Local.xcconfig.example to
+// Local.xcconfig (gitignored) and set your team ID there. See CONTRIBUTING.md → Code signing.
+CODE_SIGN_IDENTITY = -
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"

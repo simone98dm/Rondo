@@ -2,7 +2,9 @@ import SwiftUI
 
 /// Pointer cursor, hover highlight, pressed feedback and a disabled look for every clickable element.
 struct RondoButtonStyle: ButtonStyle {
-    enum Kind { case plain, row, tab, icon }
+    /// `tile`: the label pads itself and draws its own active fill, so the style adds no padding —
+    /// hover, press and active backgrounds then cover exactly the same area.
+    enum Kind { case plain, row, tile, icon }
 
     var kind: Kind = .plain
     var isSelected = false
@@ -41,7 +43,7 @@ private struct StyledButtonBody: View {
         switch kind {
         case .plain: EdgeInsets(top: 3, leading: 6, bottom: 3, trailing: 6)
         case .row: Theme.rowPadding
-        case .tab: EdgeInsets(top: 6, leading: 2, bottom: 6, trailing: 2)
+        case .tile: EdgeInsets()
         case .icon: EdgeInsets(top: 3, leading: 3, bottom: 3, trailing: 3)
         }
     }
@@ -57,4 +59,5 @@ extension ButtonStyle where Self == RondoButtonStyle {
     static var rondo: RondoButtonStyle { RondoButtonStyle() }
     static var rondoRow: RondoButtonStyle { RondoButtonStyle(kind: .row) }
     static var rondoIcon: RondoButtonStyle { RondoButtonStyle(kind: .icon) }
+    static var rondoTile: RondoButtonStyle { RondoButtonStyle(kind: .tile) }
 }

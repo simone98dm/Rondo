@@ -1,0 +1,168 @@
+name: Bug report
+description: Something in Rondo doesn't work as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! The more of this you fill in, the faster the bug can be reproduced and fixed.
+        Please check the [existing issues](https://github.com/simone98dm/Rondo/issues?q=is%3Aissue) first.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature
+      description: Where does the problem happen?
+      options:
+        - Menu bar stats
+        - System tab / System Monitor
+        - Disk tab / Disk Clean (Mole)
+        - Window manager (zones, shortcuts, tiling suggestions)
+        - Window Ring
+        - Window switcher
+        - File Converter
+        - Stay Awake / Keyboard Cleaning
+        - Settings
+        - Install / update / launch
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: A clear, short description of the bug.
+      placeholder: The Disk tab stays on "Analyzing your home folder…" forever.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact steps, starting from a fresh launch if you can.
+      placeholder: |
+        1. Open the popover and press ⌘2
+        2. Click Rescan
+        3. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      placeholder: The donut shows my home folder after a few seconds.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Sometimes
+        - Only once
+    validations:
+      required: true
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or screen recording
+      description: |
+        Drag images or videos here. ⇧⌘5 records the screen. Please hide personal file names or paths you don't want to share.
+    validations:
+      required: false
+
+  - type: input
+    id: rondo-version
+    attributes:
+      label: Rondo version
+      description: Right-click the menu bar icon → About Rondo, then click the version to copy it.
+      placeholder: 1.0.0 (10)
+    validations:
+      required: true
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: Apple menu → About This Mac.
+      placeholder: macOS 26.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: chip
+    attributes:
+      label: Mac
+      options:
+        - Apple silicon
+        - Intel
+    validations:
+      required: true
+
+  - type: input
+    id: displays
+    attributes:
+      label: Displays
+      description: Only for window, ring, switcher or menu bar issues.
+      placeholder: Built-in + one external 2560×1440 on the left, separate Spaces on
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: permissions
+    attributes:
+      label: Permissions granted to Rondo
+      description: System Settings → Privacy & Security.
+      options:
+        - label: Accessibility
+        - label: Screen Recording
+        - label: Full Disk Access
+        - label: Automation (Pages, Keynote, Numbers)
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: Command-line helpers
+      description: |
+        For Disk / Disk Clean issues paste the output of `mo --version`.
+        For File Converter issues paste `ffmpeg -version | head -1` and `cwebp -version`.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Run this in Terminal right after the problem happens and paste the output:
+        `/usr/bin/log show --last 10m --style compact --predicate 'process == "Rondo"' | tail -100`
+        For a crash, attach the report from Console.app → Crash Reports (Rondo-….ips).
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Workarounds you found, when it started (e.g. after an update), other apps that might interfere.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I'm on the latest Rondo release.
+          required: true
+        - label: I searched the existing issues and this isn't a duplicate.
+          required: true

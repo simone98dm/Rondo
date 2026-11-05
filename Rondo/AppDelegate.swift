@@ -1,4 +1,5 @@
 import AppKit
+import RondoCore
 import Carbon.HIToolbox
 import SwiftUI
 
@@ -13,8 +14,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let eventTap = EventTapService()
     let permissions = PermissionCenter()
     let monitor = SystemMonitorService(defaults: AppEnvironment.defaults)
-    let diskScanner = DiskScanService()
-    lazy var diskClean = DiskCleanService(defaults: AppEnvironment.defaults)
+    lazy var mole = MoleService(defaults: AppEnvironment.defaults,
+                                locate: AppEnvironment.usesDemoData ? { "/usr/bin/true" } : { Shell.which("mo") })
     lazy var keyboardCleaning = KeyboardCleaningService(defaults: AppEnvironment.defaults)
     lazy var preventSleep = PreventSleepService(defaults: AppEnvironment.defaults)
     lazy var converter = FileConverterController()
@@ -40,7 +41,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         AnyView(self.withServices(AboutView()))
     }
     private lazy var diskCleanWindow = AppWindowController(identifier: "diskClean", title: "Disk Clean",
-                                                           size: CGSize(width: 720, height: 620)) { [unowned self] in
+                                                           size: CGSize(width: 980, height: 760)) { [unowned self] in
         AnyView(self.withServices(DiskCleanView()))
     }
 
@@ -84,9 +85,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return self.popover.isShown || self.systemMonitorWindow.isVisible || !self.launchWindows.isEmpty
         }
         settings.onChange = { [weak self] in self?.updateStatusItem() }
-        if AppEnvironment.usesDemoData { DemoData.fill(monitor, disk: diskScanner, settings: settings) } else { monitor.start() }
+        if AppEnvironment.usesDemoData { DemoData.fill(monitor, mole: mole, settings: settings) } else { monitor.start() }
         // UI tests must not install global drag monitors or pop up onboarding
-        if !AppEnvironment.isUITesting && !AppEnvironment.usesDemoData { converter.apply() }
+        if !AppEnvironment.isUITesting && !AppEnvironment.usesDemoData {
+            converter.apply()
+            // first launch without Mole: explain the feature and how to install it, once
+            if !mole.isInstalled, !mole.hasOnboarded { open(.diskClean) }
+        }
         if !AppEnvironment.usesIsolatedDefaults { updates.start() }
         observeModes()
         updateStatusItem()
@@ -197,7 +202,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout() { open(.about) }
 
-    @objc private func openSettings() { open(.settings(nil)) }
+    @objc private func openSettings() { showSettings() }
+    func showSettings() { open(.settings(nil)) }
     @objc private func openSystemMonitor() { open(.systemMonitor) }
     @objc private func openDiskClean() { open(.diskClean) }
 
@@ -237,8 +243,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .environment(toasts)
             .environment(permissions)
             .environment(monitor)
-            .environment(diskScanner)
-            .environment(diskClean)
+            .environment(mole)
             .environment(keyboardCleaning)
             .environment(preventSleep)
             .environment(converter)

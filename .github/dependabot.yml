@@ -1,0 +1,10 @@
+# Keeps the GitHub Actions used by the workflows up to date.
+# The app has no third-party dependencies (RondoCore is a local package), so there is nothing else to track.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci

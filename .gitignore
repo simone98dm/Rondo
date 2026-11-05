@@ -47,3 +47,6 @@ docs/*
 build.log
 dist/
 *.profraw
+
+# Personal code signing (see Config/Local.xcconfig.example)
+Config/Local.xcconfig

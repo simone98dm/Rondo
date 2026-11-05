@@ -28,6 +28,7 @@
 - [Build and run](#build-and-run)
 - [Testing](#testing)
 - [Project layout](#project-layout)
+- [Contributing](#contributing)
 - [Privacy, uninstall and credits](#privacy-uninstall-and-credits)
 
 ---
@@ -93,23 +94,22 @@ Settings → **Menu Bar** has a live preview on light and dark menu bars.
 
 ## Disk and Disk Clean
 
-| Disk tab | Disk Clean window |
-| :---: | :---: |
-| ![Disk tab](screenshot/popover-disk.png) | ![Disk Clean](screenshot/disk-clean.png) |
+| Disk tab | Disk Clean: Overview | Disk Clean: Clean preview |
+| :---: | :---: | :---: |
+| ![Disk tab](screenshot/popover-disk.png) | ![Disk Clean overview with treemap](screenshot/disk-clean.png) | ![Clean preview by category](screenshot/disk-clean-clean.png) |
 
-- The **Disk tab** shows a donut of the largest folders in your home folder, scanned on demand.
-- Clicking the donut, a folder, or **Clean Up…** opens **Disk Clean**. Right-click a folder to show it in Finder.
-- **Disk Clean**:
-  1. Press **Scan**.
-  2. Each target shows its item count and size: user caches, logs, Xcode DerivedData, installers in Downloads, and the Trash.
-  3. Tick the targets you want, and expand a target to untick single items.
-  4. Press **Move to Trash…** and review the summary before confirming.
-- Items are **moved to the Trash**, so you can put them back. Only the Trash target deletes permanently, and it's labelled that way.
-- **Custom targets** accept `~` and `*` (e.g. `~/Downloads/*.tmp`).
-  - System folders are always blocked.
-  - Paths inside `/Users`, `/Library`, `/Applications` and `/Volumes` must be at least 4 levels deep.
-  - Every path is re-checked (symlinks resolved) right before it's moved.
-- Folders Rondo can't read are listed, with a link to grant **Full Disk Access**.
+Disk analysis and cleanup are powered by [Mole](https://github.com/tw93/mole), a free open-source CLI. Rondo ships no cleaning logic of its own: it runs `mo`, reads its previews and charts the results.
+
+- **Setup:** install Mole with `brew install mole`. On first launch without it, Rondo opens Disk Clean with the install command to copy. The Disk features stay off until `mo` is found (Settings → Disk Clean → **Check Again**).
+- The **Disk tab** shows free space and a donut of what fills your home folder (`mo analyze --json ~`). Hover a slice or a legend row to read it. Click a row to show it in Finder.
+- **Disk Clean** has three modes:
+  - **Overview:** free space, a home-folder donut, Mole's heavy locations (cleanable caches marked), and a folder explorer. Switch the explorer between **UI**, a treemap that fills the window where each tile's area is its size (hover for name, size and share; click a folder to open it), and **List**, an expandable tree. Every folder is analyzed by Mole the first time you open it.
+  - **Clean:** `mo clean --dry-run` shows the space to free as a donut by category, plus every path. **Clean…** runs `mo clean`.
+  - **Optimize:** `mo optimize --dry-run` lists the maintenance tasks. **Optimize…** runs `mo optimize`.
+- Clean and Optimize always preview first. Nothing runs until you confirm.
+- Mole **deletes permanently** and empties the Trash. To protect a path, add it to `~/.config/mole/whitelist` and preview again.
+- Steps that need an administrator password are skipped. Run `mo clean` in Terminal for a full system-level clean.
+- Granting Rondo **Full Disk Access** lets Mole read the Trash and other protected folders.
 
 ---
 
@@ -227,7 +227,7 @@ A regular window (⌘,) with a searchable sidebar:
 | **Window Ring** | Trigger (default ⌃⌥, remappable), ring on/off, size, preview, haptics, direction map |
 | **Window Switcher** | Enable, shortcut, permissions |
 | **File Converter** | On/off, wheel keys, where results go, reveal in Finder, ffmpeg/cwebp status, recents |
-| **Disk Clean** | Summary, safety rules, Full Disk Access status |
+| **Disk Clean** | Mole status and install command, safety notes, Full Disk Access status |
 | **Power & Keyboard** | Stay Awake mode and duration, Keyboard Cleaning auto-exit |
 | **About & Help** | Version, links, keyboard cheat-sheet |
 
@@ -239,7 +239,7 @@ A regular window (⌘,) with a searchable sidebar:
 | --- | --- | --- |
 | **Accessibility** | Zone shortcuts, Window Ring, tiling suggestions, window switcher, Keyboard Cleaning | Those features stay off; everything else works |
 | **Screen Recording** | Live thumbnails in the switcher | App icons are shown instead |
-| **Full Disk Access** *(optional)* | Disk Clean reading protected folders such as the Trash | Those folders are listed as unreadable |
+| **Full Disk Access** *(optional)* | Mole reading protected folders such as the Trash | Mole skips those folders |
 | **Automation** *(asked on first use)* | Converting Pages, Keynote and Numbers files | Those formats are unavailable |
 
 Grant them in System Settings → Privacy & Security. Rondo notices the change by itself; there's no need to relaunch.
@@ -250,6 +250,7 @@ Grant them in System Settings → Privacy & Security. Rondo notices the change b
 
 - macOS 26 (Tahoe) or later
 - Xcode 26 or later to build
+- Optional: [Mole](https://github.com/tw93/mole) (`brew install mole`) for Disk analysis and Disk Clean
 - Optional for the File Converter: `brew install ffmpeg webp`
 
 ---
@@ -263,7 +264,7 @@ cd rondo
 open dist/Rondo.app
 ```
 
-Or open `Rondo.xcodeproj` in Xcode and press **⌘R**. The File Converter engine is a local Swift package (`Packages/RondoCore`) that Xcode resolves automatically.
+Or open `Rondo.xcodeproj` in Xcode and press **⌘R**. The File Converter engine is a local Swift package (`Packages/RondoCore`) that Xcode resolves automatically. No Apple developer account is needed: builds are signed ad hoc. To sign with your own team, see [Code signing](CONTRIBUTING.md#code-signing).
 
 First launch:
 1. Look for the ring icon in the menu bar.
@@ -289,9 +290,9 @@ First launch:
 ./scripts/release.sh minor --notes-file notes.md   # or patch / major; omit --notes-file to auto-generate notes
 ```
 
-The script bumps the version in the project, builds **once** into `dist/Rondo.app`, checks that the built app reports the new version, zips that same app, commits, creates an annotated tag `vX.Y.Z`, pushes, and publishes the GitHub release. A GitHub Action (`.github/workflows/tag-version.yml`) also fails any pushed tag whose name doesn't match the app version, and `./scripts/version.sh` prints or checks the version by hand.
+The script bumps the version in the project, builds **once** into `dist/Rondo.app`, checks that the built app reports the new version, zips that same app, commits, creates an annotated tag `vX.Y.Z`, pushes, and publishes the GitHub release. Add the release's changes to [CHANGELOG.md](CHANGELOG.md) first. A GitHub Action (`.github/workflows/tag-version.yml`) also fails any pushed tag whose name doesn't match the app version, and `./scripts/version.sh` prints or checks the version by hand.
 
-- **Unit tests** (`RondoTests`, Swift Testing) cover zone geometry, multi-monitor screen choice, shortcut normalization, the shared event tap, the switcher and ring state machines, menu bar formatting, sampler math, process grouping, Disk Clean policy and Trash behaviour, Stay Awake assertions, Keyboard Cleaning, tiling suggestions and the converter switch.
+- **Unit tests** (`RondoTests`, Swift Testing) cover zone geometry, multi-monitor screen choice, shortcut normalization, the shared event tap, the switcher and ring state machines, menu bar formatting, sampler math, process grouping, Mole output parsing and command flow, treemap layout and chart slices, Stay Awake assertions, Keyboard Cleaning, tiling suggestions and the converter switch.
 - **UI tests** (`RondoUITests`) drive the popover, the Settings window, Disk Clean and System Monitor, and check that every control has an accessibility label.
 - **RondoCore** runs the full conversion matrix.
 
@@ -305,7 +306,7 @@ Launch flags used by tests and tools:
 | `--open-popover-window[=Tab]` | Popover content in a window |
 | `--open-settings=<pane>` | Settings window on a pane |
 | `--open-system-monitor` | System Monitor window |
-| `--open-disk-clean` | Disk Clean window |
+| `--open-disk-clean[=clean\|optimize]` | Disk Clean window, on Overview or the given mode |
 | `--open-about` | About window |
 
 ---
@@ -319,8 +320,7 @@ Rondo/
   Modules/
     SystemMonitor/   sampler, sensors, process groups, popover + window views
     StatusBar/       menu bar formatter and renderer
-    DiskUtility/     Disk tab
-    DiskClean/       path policy, service, window
+    Mole/            Mole CLI runner and parsers, Disk tab, Disk Clean window
     WindowManager/   zones, shortcuts, tiling suggestions, free-space math
     WindowRing/      ring logic, key handling, ring and preview
     TabSwitch/       window switcher
@@ -330,14 +330,21 @@ Rondo/
 Packages/RondoCore/  conversion engine (formats, tools, wheel logic) + tests
 RondoTests/, RondoUITests/
 design/icon/         icon source (IconKit.swift, SVG masters, direction sheet)
-scripts/             build, test, perf, e2e, screenshots, icons
+scripts/             build, test, format, perf, e2e, screenshots, icons
+Config/              code signing settings (Signing.xcconfig, your own Local.xcconfig)
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, conventions and tests, and follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report bugs and ideas through the [issue forms](https://github.com/simone98dm/Rondo/issues/new/choose), and security problems privately as described in [SECURITY.md](SECURITY.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
 ## Privacy, uninstall and credits
 
-- **Privacy:** no network calls and no analytics. Conversions, scans and cleanups happen on your Mac.
+- **Privacy:** no analytics. The only network request is a daily check for a new release on GitHub, which you can turn off in Settings → General. Conversions, scans and cleanups happen on your Mac.
 - **Uninstall:** quit Rondo, delete the app, then `defaults delete com.simone98dm.rondo`.
-- **Credits:** the ring concept is inspired by [Loop](https://github.com/MrKai77/Loop), the tiling suggestions and Disk Clean rules by [One Menu](https://coffeebreak.software/one-menu/), and the File Converter by [Tangerine](https://apps.apple.com/app/id6813034065). No code was copied from Loop (GPL); the ring is an independent implementation.
+- **Credits:** the ring concept is inspired by [Loop](https://github.com/MrKai77/Loop), the tiling suggestions by [One Menu](https://coffeebreak.software/one-menu/), and the File Converter by [Tangerine](https://apps.apple.com/app/id6813034065). No code was copied from Loop (GPL); the ring is an independent implementation. Disk analysis and cleaning are done by [Mole](https://github.com/tw93/mole) (GPL-3.0), which Rondo runs as a separate command-line program; no Mole code is included in Rondo.
 - **License:** [MIT](LICENSE).

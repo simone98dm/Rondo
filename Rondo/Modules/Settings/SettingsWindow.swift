@@ -42,7 +42,7 @@ enum SettingsSection: String, CaseIterable, Identifiable {
         case .windowRing:    ["ring", "radial", "trigger", "control option", "preview", "mouse", "loop"]
         case .switcher:      ["alt tab", "hotkey", "thumbnails", "screen recording"]
         case .fileConverter: ["convert", "wheel", "drag", "ffmpeg", "pdf", "image", "video", "tools", "tangerine"]
-        case .diskClean:     ["clean", "cache", "trash", "storage", "full disk access", "space"]
+        case .diskClean:     ["clean", "cache", "trash", "storage", "full disk access", "space", "mole", "optimize", "analyze", "treemap"]
         case .power:         ["sleep", "awake", "caffeinate", "keyboard", "cleaning", "display"]
         case .about:         ["version", "help", "shortcuts", "github"]
         }

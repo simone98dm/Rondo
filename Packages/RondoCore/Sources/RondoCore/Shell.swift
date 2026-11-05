@@ -35,11 +35,13 @@ public enum Shell {
 
     /// Runs a process to completion; throws with combined output on non-zero exit.
     @discardableResult
-    public static func run(_ executable: String, _ arguments: [String], cwd: URL? = nil) throws -> String {
+    public static func run(_ executable: String, _ arguments: [String], cwd: URL? = nil,
+                           environment: [String: String]? = nil) throws -> String {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: executable)
         process.arguments = arguments
         if let cwd { process.currentDirectoryURL = cwd }
+        if let environment { process.environment = environment }
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = pipe
