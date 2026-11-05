@@ -45,4 +45,18 @@ final class SettingsUITests: XCTestCase {
         cpu.click()
         XCTAssertNotEqual(cpu.value as? Int, before)
     }
+
+    func testCommandCommaOpensRealSettingsWindow() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--open-about"]
+        app.launch()
+        XCTAssertTrue(app.windows["about"].waitForExistence(timeout: 10))
+        app.typeKey(",", modifierFlags: .command)
+        let settings = app.windows["settings"]
+        XCTAssertTrue(settings.waitForExistence(timeout: 5))
+        XCTAssertTrue(settings.outlines.staticTexts["General"].exists)
+        // the empty SwiftUI Settings scene must not open alongside it
+        XCTAssertEqual(app.windows.matching(NSPredicate(format: "identifier != 'settings' AND identifier != 'about'")).count, 0,
+                       app.debugDescription)
+    }
 }

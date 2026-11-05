@@ -202,7 +202,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func showAbout() { open(.about) }
 
-    @objc private func openSettings() { open(.settings(nil)) }
+    @objc private func openSettings() { showSettings() }
+    func showSettings() { open(.settings(nil)) }
     @objc private func openSystemMonitor() { open(.systemMonitor) }
     @objc private func openDiskClean() { open(.diskClean) }
 
