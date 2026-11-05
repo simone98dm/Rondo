@@ -17,12 +17,20 @@ final class WindowsUITests: XCTestCase {
         let popover = app.windows["Rondo"]
         XCTAssertTrue(popover.waitForExistence(timeout: 10))
         popover.buttons["Disk"].click()
-        popover.buttons["Clean Up…"].click()
+        // wait for the analysis (or the setup prompt) so the button doesn't move under the click
+        _ = popover.buttons["Rescan"].waitForExistence(timeout: 30) || popover.buttons["Set Up Mole…"].exists
+        popover.buttons["Open Disk Clean…"].click()
         let window = app.windows["diskClean"]
         XCTAssertTrue(window.waitForExistence(timeout: 5))
-        XCTAssertTrue(window.buttons["Scan"].exists)
-        XCTAssertTrue(window.buttons["Move to Trash…"].exists)
-        XCTAssertTrue(window.checkBoxes["Clean User Caches"].exists)
+        // Mole may or may not be installed on the test machine: either the modes or the setup screen
+        if window.radioButtons["Clean"].waitForExistence(timeout: 5) {
+            XCTAssertTrue(window.radioButtons["Overview"].exists)
+            XCTAssertTrue(window.descendants(matching: .any)["Folder map"].waitForExistence(timeout: 30))
+            window.radioButtons["Clean"].click()
+            XCTAssertTrue(window.buttons["Preview Clean"].waitForExistence(timeout: 5))
+        } else {
+            XCTAssertTrue(window.buttons["Check Again"].exists, window.debugDescription)
+        }
     }
 
     func testSystemMonitorOpensFromRing() {
